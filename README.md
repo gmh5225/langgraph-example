@@ -4,6 +4,23 @@
 
 This is an example agent to deploy with LangGraph Cloud.
 
+
+## run
+```
+pip install -U "langgraph-cli[inmem]"
+langgraph dev
+```
+
+## format code
+```
+pip install black
+
+# 使用
+black .  # 格式化当前目录下所有Python文件
+black my_agent/  # 格式化特定目录
+black my_agent/agent.py  # 格式化特定文件
+```
+
 > [!TIP]
 > If you would rather use `pyproject.toml` for managing dependencies in your LangGraph Cloud project, please check out [this repository](https://github.com/langchain-ai/langgraph-example-pyproject).
 
