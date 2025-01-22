@@ -18,15 +18,11 @@ def _get_model(model_name: str):
         # 使用 Anthropic 的 Claude 3 模型
         model = ChatAnthropic(temperature=0, model_name="claude-3-sonnet-20240229")
     elif model_name == "gemini":
-        model = ChatGoogleGenerativeAI(
-            model="gemini-pro",
-            temperature=0,
-            convert_system_message_to_human=True
-        )
+        model = ChatGoogleGenerativeAI(temperature=0, model="gemini-2.0-flash-exp")
     else:
         # 如果提供了不支持的模型名称，抛出错误
         raise ValueError(f"Unsupported model type: {model_name}")
-    
+
     # 将搜索工具绑定到模型上，使模型能够使用这些工具
     model = model.bind_tools(tools)
     return model
@@ -54,21 +50,24 @@ system_prompt = """Be a helpful assistant"""
 def call_model(state, config):
     # 获取当前的消息历史
     messages = state["messages"]
-    # 在消息列表开头添加系统提示词，设置AI的行为模式
-    messages = [{"role": "system", "content": system_prompt}] + messages
-    
-    # 获取要使用的模型名称
-    # 注释掉的是从配置中获取模型名称的代码
-    # model_name = config.get('configurable', {}).get("model_name", "anthropic")
-    # 当前固定使用 OpenAI 模型
-    model_name = "openai"
-    #model_name = "gemini"
-    
+
+    ## 测试强行设置是 gemini
+    # 根据不同的模型处理系统提示词
+    model_name = "gemini"  # 当前使用的模型
+
+    formatted_messages = [{"role": "system", "content": system_prompt}] + messages
+
+    # if model_name == "gemini":
+    #     # Gemini-pro 不支持系统提示词，直接使用消息历史
+    #     formatted_messages = messages
+    # else:
+    #     # 其他模型（如 OpenAI、Anthropic）添加系统提示词
+    #     formatted_messages = [{"role": "system", "content": system_prompt}] + messages
+
     # 获取模型实例
     model = _get_model(model_name)
     # 调用模型生成回复
-    response = model.invoke(messages)
-    # 返回包含新消息的字典，这个消息会被添加到现有的消息列表中
+    response = model.invoke(formatted_messages)
     return {"messages": [response]}
 
 
