@@ -11,6 +11,11 @@ pip install -U "langgraph-cli[inmem]"
 langgraph dev
 ```
 
+## test
+```
+python run.py
+```
+
 ## format code
 ```
 pip install black
