@@ -1,6 +1,7 @@
 from functools import lru_cache
 from langchain_anthropic import ChatAnthropic
 from langchain_openai import ChatOpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 from my_agent.utils.tools import tools
 from langgraph.prebuilt import ToolNode
 
@@ -16,6 +17,12 @@ def _get_model(model_name: str):
     elif model_name == "anthropic":
         # 使用 Anthropic 的 Claude 3 模型
         model = ChatAnthropic(temperature=0, model_name="claude-3-sonnet-20240229")
+    elif model_name == "gemini":
+        model = ChatGoogleGenerativeAI(
+            model="gemini-pro",
+            temperature=0,
+            convert_system_message_to_human=True
+        )
     else:
         # 如果提供了不支持的模型名称，抛出错误
         raise ValueError(f"Unsupported model type: {model_name}")
@@ -55,6 +62,7 @@ def call_model(state, config):
     # model_name = config.get('configurable', {}).get("model_name", "anthropic")
     # 当前固定使用 OpenAI 模型
     model_name = "openai"
+    #model_name = "gemini"
     
     # 获取模型实例
     model = _get_model(model_name)
